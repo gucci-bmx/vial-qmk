@@ -22,6 +22,7 @@ jobs:
 
       - name: Pull Bastardkb Folders
         run: |
+          git config --global --add safe.directory /__w/vial-qmk/vial-qmk
           git submodule update --init --recursive --remote keyboards/bastardkb
 
       - name: Inject Vial Config
