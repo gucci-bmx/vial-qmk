@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Firmware
         run: |
-          qmk setup -y
+          ./util/qmk_install.sh -y
           make ${{ github.event.inputs.keyboard }}:${{ github.event.inputs.keymap }}
 
       - name: Upload Artifact
