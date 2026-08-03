@@ -20,10 +20,12 @@ jobs:
       - name: Checkout Vial-QMK
         uses: actions/checkout@v3
 
-      - name: Pull Bastardkb Folders
+      - name: Pull Bastardkb Folders Direct
         run: |
-          git config --global --add safe.directory /__w/vial-qmk/vial-qmk
-          git submodule update --init --recursive --remote keyboards/bastardkb
+          git config --global --add safe.directory '*'
+          mkdir -p keyboards/bastardkb
+          git clone --depth 1 https://github.com /tmp/bastardkb
+          cp -r /tmp/bastardkb/keyboards/bastardkb/* keyboards/bastardkb/
 
       - name: Inject Vial Config
         run: |
