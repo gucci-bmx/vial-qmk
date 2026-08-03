@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       keyboard:
-        description: 'Keyboard name (e.g. bastardkb/charybdis/nano)'
+        description: 'Keyboard name'
         required: true
         default: 'bastardkb/charybdis/nano'
       keymap:
-        description: 'Keymap name (e.g. default)'
+        description: 'Keymap name'
         required: true
-        default: 'default'
+        default: 'vial'
 
 jobs:
   build:
@@ -20,31 +20,73 @@ jobs:
       - name: Checkout Vial-QMK
         uses: actions/checkout@v3
 
-      - name: Pull Bastardkb Folders Direct
+      - name: Create Charybdis Folder Directly
         run: |
-          git config --global --add safe.directory '*'
-          mkdir -p keyboards/bastardkb
-          git clone --depth 1 https://github.com /tmp/bastardkb
-          cp -r /tmp/bastardkb/keyboards/bastardkb/* keyboards/bastardkb/
+          mkdir -p keyboards/bastardkb/charybdis/nano/keymaps/vial
 
-      - name: Inject Vial Config
+      - name: Write info.json
         run: |
-          mkdir -p keyboards/bastardkb/charybdis/nano/keymaps/default
-          echo "VIA_ENABLE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
-          echo "VIAL_ENABLE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
-          echo "COMBO_ENABLE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
-          echo "VIAL_INSECURE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
-          
-          echo -e "#pragma once\n#define VIAL_KEYBOARD_UID {0xBE, 0xEF, 0x23, 0x42, 0x11, 0xAA, 0xBB, 0xCC}\n#define VIAL_UNLOCK_COMBO {0, 0}" > keyboards/bastardkb/charybdis/nano/keymaps/default/config.h
+          cat << 'EOF' > keyboards/bastardkb/charybdis/nano/info.json
+          {
+              "keyboard_name": "Charybdis Nano Vial",
+              "url": "",
+              "maintainer": "qmk",
+              "width": 12,
+              "height": 4,
+              "layouts": {
+                  "LAYOUT": {
+                      "layout": [
+                          {"label":"L00", "x":0, "y":0}, {"label":"L01", "x":1, "y":0}, {"label":"L02", "x":2, "y":0}, {"label":"L03", "x":3, "y":0}, {"label":"L04", "x":4, "y":0}, {"label":"L05", "x":5, "y":0}, {"label":"R00", "x":6, "y":0}, {"label":"R01", "x":7, "y":0}, {"label":"R02", "x":8, "y":0}, {"label":"R03", "x":9, "y":0}, {"label":"R04", "x":10, "y":0}, {"label":"R05", "x":11, "y":0},
+                          {"label":"L10", "x":0, "y":1}, {"label":"L11", "x":1, "y":1}, {"label":"L12", "x":2, "y":1}, {"label":"L13", "x":3, "y":1}, {"label":"L14", "x":4, "y":1}, {"label":"L15", "x":5, "y":1}, {"label":"R10", "x":6, "y":1}, {"label":"R11", "x":7, "y":1}, {"label":"R12", "x":8, "y":1}, {"label":"R13", "x":9, "y":1}, {"label":"R14", "x":10, "y":1}, {"label":"R15", "x":11, "y":1},
+                          {"label":"L20", "x":0, "y":2}, {"label":"L21", "x":1, "y":2}, {"label":"L22", "x":2, "y":2}, {"label":"L23", "x":3, "y":2}, {"label":"L24", "x":4, "y":2}, {"label":"L25", "x":5, "y":2}, {"label":"R20", "x":6, "y":2}, {"label":"R21", "x":7, "y":2}, {"label":"R22", "x":8, "y":2}, {"label":"R23", "x":9, "y":2}, {"label":"R24", "x":10, "y":2}, {"label":"R25", "x":11, "y":2},
+                                                                                {"label":"L33", "x":3, "y":3}, {"label":"L34", "x":4, "y":3}, {"label":"L35", "x":5, "y":3}, {"label":"R30", "x":6, "y":3}, {"label":"R31", "x":7, "y":3}, {"label":"R32", "x":8, "y":3}
+                      ]
+                  }
+              }
+          }
+          EOF
+
+      - name: Write rules.mk
+        run: |
+          cat << 'EOF' > keyboards/bastardkb/charybdis/nano/keymaps/vial/rules.mk
+          VIA_ENABLE = yes
+          VIAL_ENABLE = yes
+          COMBO_ENABLE = yes
+          VIAL_INSECURE = yes
+          LTO_ENABLE = yes
+          EOF
+
+      - name: Write config.h
+        run: |
+          cat << 'EOF' > keyboards/bastardkb/charybdis/nano/keymaps/vial/config.h
+          #pragma once
+          #define VIAL_KEYBOARD_UID {0xBE, 0xEF, 0x23, 0x42, 0x11, 0xAA, 0xBB, 0xCC}
+          #define VIAL_UNLOCK_COMBO {0, 0}
+          EOF
+
+      - name: Write keymap.c
+        run: |
+          cat << 'EOF' > keyboards/bastardkb/charybdis/nano/keymaps/vial/keymap.c
+          #include QMK_KEYBOARD_H
+
+          const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+              [0] = LAYOUT(
+                  KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
+                  KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_ENT,
+                  KC_LSFT, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+                                                     KC_LALT, KC_SPC,  KC_LGUI, KC_RSPC, KC_RALT, KC_RCTL
+              )
+          };
+          EOF
 
       - name: Build Firmware
         run: |
-          qmk compile -kb ${{ github.event.inputs.keyboard }} -km ${{ github.event.inputs.keymap }}
+          qmk compile -kb keyboards/bastardkb/charybdis/nano -km vial
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.keymap }}-firmware
+          name: vial-firmware
           path: |
             *.hex
             *.bin
