@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: qmkfm/qmk_base_container:latest
+    container: ghcr.io/qmk/qmk_base_container:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
