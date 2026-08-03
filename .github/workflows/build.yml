@@ -17,10 +17,22 @@ jobs:
     runs-on: ubuntu-latest
     container: qmkfm/qmk_cli:latest
     steps:
-      - name: Checkout
+      - name: Checkout Vial-QMK
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
+
+      - name: Pull Bastardkb Folders
+        run: |
+          git submodule update --init --recursive --remote keyboards/bastardkb
+
+      - name: Inject Vial Config
+        run: |
+          mkdir -p keyboards/bastardkb/charybdis/nano/keymaps/default
+          echo "VIA_ENABLE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
+          echo "VIAL_ENABLE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
+          echo "COMBO_ENABLE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
+          echo "VIAL_INSECURE = yes" >> keyboards/bastardkb/charybdis/nano/keymaps/default/rules.mk
+          
+          echo -e "#pragma once\n#define VIAL_KEYBOARD_UID {0xBE, 0xEF, 0x23, 0x42, 0x11, 0xAA, 0xBB, 0xCC}\n#define VIAL_UNLOCK_COMBO {0, 0}" > keyboards/bastardkb/charybdis/nano/keymaps/default/config.h
 
       - name: Build Firmware
         run: |
