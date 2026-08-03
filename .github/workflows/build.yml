@@ -1,0 +1,37 @@
+name: Build Firmware
+
+on:
+  workflow_dispatch:
+    inputs:
+      keyboard:
+        description: 'Keyboard name (e.g. bastardkb/charybdis/nano)'
+        required: true
+        default: 'bastardkb/charybdis/nano'
+      keymap:
+        description: 'Keymap name (e.g. default)'
+        required: true
+        default: 'default'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: qmkfm/qmk_base_container:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Build Firmware
+        run: |
+          qmk setup -y
+          make ${{ github.event.inputs.keyboard }}:${{ github.event.inputs.keymap }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.inputs.keymap }}-firmware
+          path: |
+            *.hex
+            *.bin
+            *.uf2
