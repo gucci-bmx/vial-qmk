@@ -28,7 +28,7 @@ jobs:
           make ${{ github.event.inputs.keyboard }}:${{ github.event.inputs.keymap }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.inputs.keymap }}-firmware
           path: |
