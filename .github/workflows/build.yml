@@ -81,8 +81,7 @@ jobs:
 
       - name: Build Firmware
         run: |
-          qmk compile -kb keyboards/bastardkb/charybdis/nano -km vial
-
+          qmk compile -kb bastardkb/charybdis/nano -km vial
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
